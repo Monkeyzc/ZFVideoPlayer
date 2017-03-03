@@ -46,6 +46,7 @@
 		A47C0D2F1E695C2C00031B50 /* UIView+WebCache.m in Sources */ = {isa = PBXBuildFile; fileRef = A47C0D1A1E695C2C00031B50 /* UIView+WebCache.m */; };
 		A47C0D301E695C2C00031B50 /* UIView+WebCacheOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = A47C0D1C1E695C2C00031B50 /* UIView+WebCacheOperation.m */; };
 		A47C0D331E695E5900031B50 /* ZFVideoPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = A47C0D321E695E5900031B50 /* ZFVideoPlayer.m */; };
+		A4A6277F1E69D076000BB6F8 /* ZFSliderBar.m in Sources */ = {isa = PBXBuildFile; fileRef = A4A6277E1E69D076000BB6F8 /* ZFSliderBar.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -130,6 +131,8 @@
 		A47C0D1C1E695C2C00031B50 /* UIView+WebCacheOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+WebCacheOperation.m"; sourceTree = "<group>"; };
 		A47C0D311E695E5900031B50 /* ZFVideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZFVideoPlayer.h; sourceTree = "<group>"; };
 		A47C0D321E695E5900031B50 /* ZFVideoPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZFVideoPlayer.m; sourceTree = "<group>"; };
+		A4A6277D1E69D076000BB6F8 /* ZFSliderBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZFSliderBar.h; sourceTree = "<group>"; };
+		A4A6277E1E69D076000BB6F8 /* ZFSliderBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZFSliderBar.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -170,6 +173,8 @@
 				A47C0CCA1E6956D000031B50 /* VideoCell.m */,
 				A47C0D311E695E5900031B50 /* ZFVideoPlayer.h */,
 				A47C0D321E695E5900031B50 /* ZFVideoPlayer.m */,
+				A4A6277D1E69D076000BB6F8 /* ZFSliderBar.h */,
+				A4A6277E1E69D076000BB6F8 /* ZFSliderBar.m */,
 				A47C0CC61E69441A00031B50 /* VideoModel.h */,
 				A47C0CC71E69441A00031B50 /* VideoModel.m */,
 				A47C0CB81E690EB700031B50 /* Main.storyboard */,
@@ -375,6 +380,7 @@
 				A47C0CE91E69598600031B50 /* MASConstraint.m in Sources */,
 				A47C0D1E1E695C2C00031B50 /* MKAnnotationView+WebCache.m in Sources */,
 				A47C0D261E695C2C00031B50 /* SDWebImageDownloaderOperation.m in Sources */,
+				A4A6277F1E69D076000BB6F8 /* ZFSliderBar.m in Sources */,
 				A47C0CEB1E69598600031B50 /* MASLayoutConstraint.m in Sources */,
 				A47C0CC81E69441A00031B50 /* VideoModel.m in Sources */,
 				A47C0D211E695C2C00031B50 /* SDImageCache.m in Sources */,

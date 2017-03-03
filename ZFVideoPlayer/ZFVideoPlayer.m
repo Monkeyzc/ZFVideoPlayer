@@ -10,6 +10,7 @@
 #import "VideoModel.h"
 #import <AVFoundation/AVFoundation.h>
 #import "Masonry.h"
+#import "ZFSliderBar.h"
 
 @interface ZFVideoPlayer()
 
@@ -21,8 +22,12 @@
 @property (nonatomic, strong, readwrite) UIActivityIndicatorView *activityIndicatorView;
 
 @property (nonatomic, strong, readwrite) UIView *bottomToolsView;
+@property (nonatomic, strong, readwrite) ZFSliderBar *sliderBar;
 @property (nonatomic, strong, readwrite) UILabel *totalDurationLabel;
 @property (nonatomic, strong, readwrite) UILabel *currentTimeLabel;
+
+
+
 @end
 
 @implementation ZFVideoPlayer
@@ -33,6 +38,7 @@
         [self addSubview: self.playOrPauseBtn];
         [self addSubview: self.activityIndicatorView];
         [self addSubview: self.bottomToolsView];
+        [self addSubview: self.sliderBar];
         [self.bottomToolsView addSubview: self.totalDurationLabel];
         [self.bottomToolsView addSubview: self.currentTimeLabel];
         
@@ -83,6 +89,13 @@
     return _bottomToolsView;
 }
 
+- (ZFSliderBar *)sliderBar {
+    if (!_sliderBar) {
+        _sliderBar = [[ZFSliderBar alloc] init];
+    }
+    return _sliderBar;
+}
+
 - (UILabel *)totalDurationLabel {
     if (!_totalDurationLabel) {
         _totalDurationLabel = [[UILabel alloc] init];
@@ -129,24 +142,33 @@
         make.leading.equalTo(self);
         make.trailing.equalTo(self);
         make.bottom.equalTo(self);
-        make.height.equalTo(@60);
+        make.height.equalTo(@40);
     }];
     
     [self.totalDurationLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.trailing.equalTo(self.bottomToolsView).offset(-12);
         make.centerY.equalTo(self.bottomToolsView);
+        make.width.equalTo(@65);
     }];
     
     [self.currentTimeLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.leading.equalTo(self.bottomToolsView).offset(12);
         make.centerY.equalTo(self.bottomToolsView);
+        make.width.equalTo(@65);
     }];
     
+    [self.sliderBar mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.leading.equalTo(self.currentTimeLabel.mas_trailing).offset(1);
+        make.trailing.equalTo(self.totalDurationLabel.mas_leading).offset(-1);
+        make.top.equalTo(self.bottomToolsView);
+        make.bottom.equalTo(self.bottomToolsView);
+    }];
     
     [self bringSubviewToFront: self.playOrPauseBtn];
     [self bringSubviewToFront: self.activityIndicatorView];
     
     [self bringSubviewToFront: self.bottomToolsView];
+    [self bringSubviewToFront: self.sliderBar];
     [self bringSubviewToFront: self.totalDurationLabel];
     [self bringSubviewToFront: self.currentTimeLabel];
 }
@@ -246,6 +268,13 @@
         float currentTime = CMTimeGetSeconds([weakSelf.playerItem currentTime]);
         weakSelf.totalDurationLabel.text = [weakSelf timeFormatted: totalDuration];
         weakSelf.currentTimeLabel.text = [weakSelf timeFormatted: currentTime];
+        
+        float scale = currentTime / totalDuration;
+        weakSelf.sliderBar.value = scale;
+        if (scale == 1) {
+            NSLog(@"播放完成");
+        }
+        
     }];
 }
 
