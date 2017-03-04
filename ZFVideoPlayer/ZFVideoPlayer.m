@@ -33,6 +33,10 @@
 @property (nonatomic, assign, readwrite) CGRect originFrame;
 @property (nonatomic, strong, readwrite) UITableView *bindTableView;
 
+@property (nonatomic, assign, readwrite) BOOL isZoom;
+@property (nonatomic, assign, readwrite) BOOL isOriginFrame;
+
+
 @end
 
 @implementation ZFVideoPlayer
@@ -41,6 +45,8 @@
     if (self = [super initWithFrame: frame]) {
         
         self.originFrame = frame;
+        self.isZoom = NO;
+        self.isOriginFrame = NO;
         
         [self addSubview: self.playOrPauseBtn];
         [self addSubview: self.activityIndicatorView];
@@ -112,8 +118,11 @@
         _bottomToolsView.sliderBar.dragDotBlock = ^{
             [weakSelf.player pause];
         };
-
         
+        _bottomToolsView.zoomBlock = ^{
+            NSLog(@"全屏播放");
+            [weakSelf zoomPlayer];
+        };
     }
     return _bottomToolsView;
 }
@@ -128,11 +137,12 @@
 - (void)layoutSubviews {
     [super layoutSubviews];
     
-    
-    self.originSuperView = self.superview;
+    if (!self.isOriginFrame) {
+        self.originSuperView = self.superview;
+        self.isOriginFrame = YES;
+    }
     
     self.playerLayer.frame = self.bounds;
-    
     
     [self.playOrPauseBtn mas_makeConstraints:^(MASConstraintMaker *make) {
         make.center.equalTo(self);
@@ -184,12 +194,35 @@
 
 #pragma mark - Actions
 - (void)tapBgView {
-    NSLog(@"tapBgView");
+//    NSLog(@"tapBgView");
     self.playOrPauseBtn.hidden = !self.playOrPauseBtn.hidden;
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         self.playOrPauseBtn.hidden = !self.playOrPauseBtn.hidden;;
     });
+}
+
+- (void)zoomPlayer {
+    
+    if (!self.isZoom) {
+        [[UIDevice currentDevice] setValue: [NSNumber numberWithInt: UIInterfaceOrientationLandscapeLeft] forKey:@"orientation"];
+        [self updateConstraintsIfNeeded];
+        [[UIApplication sharedApplication].keyWindow addSubview: self];
+        [UIView animateWithDuration:0.3 animations:^{
+            self.frame = [UIApplication sharedApplication].keyWindow.bounds;
+        }];
+    } else {
+        [[UIDevice currentDevice] setValue: [NSNumber numberWithInt: UIDeviceOrientationPortrait] forKey:@"orientation"];
+        [self updateConstraintsIfNeeded];
+        
+        [self.originSuperView addSubview: self];
+        
+        [UIView animateWithDuration:0.3 animations:^{
+            self.frame = self.originFrame;
+        }];
+    }
+    
+    self.isZoom = !self.isZoom;
 }
 
 #pragma mark - Public

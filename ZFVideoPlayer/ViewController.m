@@ -19,7 +19,7 @@
 
 @interface ViewController () <UITableViewDataSource, UITabBarDelegate, VideoCellDelegate, UIScrollViewDelegate>
 
-@property (nonatomic, strong, readwrite) UITableView *tableView;
+@property (nonatomic, strong, readwrite) IBOutlet UITableView *tableView;
 @property (nonatomic, strong, readwrite) NSArray *data;
 @property (nonatomic, strong, readwrite) ZFVideoPlayer *videoPlayer;
 @property (nonatomic, strong, readwrite) NSIndexPath *currentPlayIndexPath;
@@ -40,11 +40,11 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
-    self.tableView = [[UITableView alloc] initWithFrame: self.view.bounds];
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
     self.tableView.tableFooterView = [UIView new];
     self.tableView.rowHeight = 280;
+    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     
     [self.view addSubview: self.tableView];
     

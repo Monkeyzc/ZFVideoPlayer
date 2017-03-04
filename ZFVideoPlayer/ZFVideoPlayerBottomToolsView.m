@@ -56,6 +56,7 @@
         _zoomBtn = [[UIButton alloc] init];
         [_zoomBtn setImage: [UIImage imageNamed:@"btn_zoom_out"] forState: UIControlStateNormal];
         [_zoomBtn setImage: [UIImage imageNamed:@"btn_zoom_in"] forState: UIControlStateSelected];
+        [_zoomBtn addTarget: self action:@selector(clickZoomBtn:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _zoomBtn;
 }
@@ -90,5 +91,13 @@
     }];
 }
 
+- (void)clickZoomBtn: (UIButton *)btn {
+    btn.selected = !btn.selected;
+    
+    if (self.zoomBlock) {
+        NSLog(@"zoom");
+        self.zoomBlock();
+    }
+}
 
 @end

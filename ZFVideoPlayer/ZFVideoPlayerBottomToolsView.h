@@ -16,4 +16,5 @@
 @property (nonatomic, strong, readwrite) UILabel *currentTimeLabel;
 @property (nonatomic, strong, readwrite) UIButton *zoomBtn;
 
+@property (nonatomic, strong, readwrite) void (^zoomBlock)();
 @end
