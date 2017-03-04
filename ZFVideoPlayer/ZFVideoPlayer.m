@@ -65,7 +65,7 @@
 - (AVPlayerLayer *)playerLayer {
     if (!_playerLayer) {
         _playerLayer = [AVPlayerLayer playerLayerWithPlayer: self.player];
-        _playerLayer.videoGravity = AVLayerVideoGravityResizeAspect;
+        _playerLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
     }
     return _playerLayer;
 }
