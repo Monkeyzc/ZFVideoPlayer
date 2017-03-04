@@ -161,7 +161,7 @@
         make.leading.equalTo(self);
         make.trailing.equalTo(self);
         make.bottom.equalTo(self);
-        make.height.equalTo(@40);
+        make.height.equalTo(@32);
     }];
 
     [self bringSubviewToFront: self.playOrPauseBtn];
