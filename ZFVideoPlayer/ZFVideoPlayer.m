@@ -12,6 +12,9 @@
 #import "Masonry.h"
 #import "ZFSliderBar.h"
 
+#define ScreenWidth [UIScreen mainScreen].bounds.size.width
+#define ScreenHeight [UIScreen mainScreen].bounds.size.height
+
 @interface ZFVideoPlayer()
 
 @property (nonatomic, strong, readwrite) AVPlayerLayer *playerLayer;
@@ -26,7 +29,12 @@
 @property (nonatomic, strong, readwrite) UILabel *totalDurationLabel;
 @property (nonatomic, strong, readwrite) UILabel *currentTimeLabel;
 
+@property (nonatomic, strong, readwrite) NSIndexPath *currentIndexPath;
+@property (nonatomic, assign, readwrite) BOOL isSmallWindow;
 
+@property (nonatomic, strong, readwrite) UIView *originSuperView;
+@property (nonatomic, assign, readwrite) CGRect originFrame;
+@property (nonatomic, strong, readwrite) UITableView *bindTableView;
 
 @end
 
@@ -34,6 +42,8 @@
 
 - (instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame: frame]) {
+        
+        self.originFrame = frame;
         
         [self addSubview: self.playOrPauseBtn];
         [self addSubview: self.activityIndicatorView];
@@ -44,6 +54,8 @@
         
         UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapBgView)];
         [self addGestureRecognizer: tapGesture];
+        
+        self.isSmallWindow = NO;
     }
     return self;
 }
@@ -148,7 +160,12 @@
 
 - (void)layoutSubviews {
     [super layoutSubviews];
+    
+    
+    self.originSuperView = self.superview;
+    
     self.playerLayer.frame = self.bounds;
+    
     
     [self.playOrPauseBtn mas_makeConstraints:^(MASConstraintMaker *make) {
         make.center.equalTo(self);
@@ -301,6 +318,103 @@
 
 - (void)dealloc {
     [self.player removeObserver: self forKeyPath: @"status"];
+}
+
+#pragma mark - small window play
+- (void)playWithBindTableView: (UITableView *)tableView currentIndexPath: (NSIndexPath *)currentIndexPath isSupportSmallWindow: (BOOL)isSupportSmallWindow {
+    NSLog(@"%@", tableView);
+    
+    CGFloat tableViewContentOffsetY = tableView.contentOffset.y;
+    
+    self.currentIndexPath = currentIndexPath;
+    self.bindTableView = tableView;
+    
+    
+    CGRect currentPlayCellRect = [tableView rectForRowAtIndexPath:currentIndexPath];
+    
+    CGFloat cellHeight = currentPlayCellRect.size.height;
+    
+    CGFloat cellTop = currentPlayCellRect.origin.y;
+    CGFloat cellBottom = cellTop + cellHeight;
+    
+    
+    // 离开屏幕, 展示小屏幕
+    if (tableViewContentOffsetY > cellBottom) {
+        NSLog(@"向上滑动, 离开屏幕");
+        
+        [self playWithSmallWindow];
+        
+        return;
+    }
+
+    if (cellTop > tableViewContentOffsetY + tableView.frame.size.height) {
+        NSLog(@"向下滑动, 离开屏幕");
+        [self playWithSmallWindow];
+        return;
+    }
+    
+    
+    // 向下滑动, 回到屏幕
+    if (tableViewContentOffsetY < cellBottom) {
+        NSLog(@"向下滑动, 回到屏幕");
+        [self playWithOriginFrame];
+        return;
+    }
+
+    if (cellTop < tableViewContentOffsetY + tableView.frame.size.height) {
+        NSLog(@"向上滑动, 回到屏幕");
+        [self playWithOriginFrame];
+        return;
+    }
+    
+}
+
+- (void)playWithSmallWindow {
+    
+    if ([self.superview isKindOfClass:[UIWindow class]]) {
+        return;
+    }
+    
+    UIWindow *keyWindow =  [UIApplication sharedApplication].keyWindow;
+    
+    // 坐标转换
+    CGRect tableViewFrame = [self.bindTableView convertRect:self.bindTableView.bounds toView: keyWindow];
+    self.frame = [self convertRect:self.frame toView: keyWindow];
+    [keyWindow addSubview: self];
+
+    [UIView animateWithDuration:0.3 animations:^{
+        CGFloat width = self.originFrame.size.width * 0.5;
+        CGFloat height = self.originFrame.size.height * 0.5;
+        
+        CGRect smallFrame = CGRectMake(tableViewFrame.origin.x + tableViewFrame.size.width  - width, tableViewFrame.origin.y + tableViewFrame.size.height - height, width, height);
+        self.frame = smallFrame;
+        self.playerLayer.frame = self.bounds;
+    }];
+}
+
+- (void)playWithOriginFrame {
+    if (![self.superview isKindOfClass:[UIWindow class]]) {
+        return;
+    }
+    
+    UITableViewCell *cell = [self.bindTableView cellForRowAtIndexPath: self.currentIndexPath];
+    CGRect cellFrame =  cell.frame;
+    
+    [UIView animateWithDuration: 0.3 animations:^{
+        
+        // 先移动到 所属 cell 的位置
+        self.frame = CGRectMake(cellFrame.origin.x, cellFrame.origin.y, self.originFrame.size.width, self.originFrame.size.height);
+        self.playerLayer.frame = self.bounds;
+        
+        NSLog(@"回到原始位置: %@", NSStringFromCGRect(self.frame));
+    } completion:^(BOOL finished) {
+        
+        // 回到原来的位子
+        self.frame = self.originFrame;
+        
+        // 添加到原来的cell上
+        [cell.contentView addSubview:self];
+    }];
 }
 
 @end

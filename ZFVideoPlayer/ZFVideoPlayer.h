@@ -12,4 +12,6 @@
 @property (nonatomic, strong, readwrite) NSString *videoUrl;
 
 - (void)destroyVideoPlayer;
+
+- (void)playWithBindTableView: (UITableView *)tableView currentIndexPath: (NSIndexPath *)currentIndexPath isSupportSmallWindow: (BOOL)isSupportSmallWindow;
 @end

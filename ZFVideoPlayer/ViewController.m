@@ -17,12 +17,12 @@
 #define ScreenHeight [UIScreen mainScreen].bounds.size.height
 
 
-@interface ViewController () <UITableViewDataSource, UITabBarDelegate, VideoCellDelegate>
+@interface ViewController () <UITableViewDataSource, UITabBarDelegate, VideoCellDelegate, UIScrollViewDelegate>
 
 @property (nonatomic, strong, readwrite) UITableView *tableView;
 @property (nonatomic, strong, readwrite) NSArray *data;
 @property (nonatomic, strong, readwrite) ZFVideoPlayer *videoPlayer;
-
+@property (nonatomic, strong, readwrite) NSIndexPath *currentPlayIndexPath;
 @end
 
 @implementation ViewController
@@ -102,10 +102,17 @@
         [_videoPlayer destroyVideoPlayer];
         _videoPlayer = nil;
     }
-
+    self.currentPlayIndexPath = [self.tableView indexPathForCell: videoCell];
     self.videoPlayer.frame = videoCell.coverView.bounds;
     [videoCell.contentView addSubview: self.videoPlayer];
     self.videoPlayer.videoUrl = [videoCell.videoModel mp4_url];
-//    [self.videoPlayer play];
 }
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    if (_videoPlayer) {
+        [_videoPlayer playWithBindTableView: self.tableView currentIndexPath: self.currentPlayIndexPath isSupportSmallWindow: YES];
+    }
+}
+
+
 @end
