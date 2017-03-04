@@ -108,11 +108,10 @@
     self.videoPlayer.videoUrl = [videoCell.videoModel mp4_url];
 }
 
+#pragma mark - 监听scroll view 的 滚动 实现自动小屏播放 和 恢复 到原来的位置
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     if (_videoPlayer) {
         [_videoPlayer playWithBindTableView: self.tableView currentIndexPath: self.currentPlayIndexPath isSupportSmallWindow: YES];
     }
 }
-
-
 @end

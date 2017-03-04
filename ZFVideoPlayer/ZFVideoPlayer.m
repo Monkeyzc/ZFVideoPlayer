@@ -10,7 +10,7 @@
 #import "VideoModel.h"
 #import <AVFoundation/AVFoundation.h>
 #import "Masonry.h"
-#import "ZFSliderBar.h"
+#import "ZFVideoPlayerBottomToolsView.h"
 
 #define ScreenWidth [UIScreen mainScreen].bounds.size.width
 #define ScreenHeight [UIScreen mainScreen].bounds.size.height
@@ -24,10 +24,7 @@
 
 @property (nonatomic, strong, readwrite) UIActivityIndicatorView *activityIndicatorView;
 
-@property (nonatomic, strong, readwrite) UIView *bottomToolsView;
-@property (nonatomic, strong, readwrite) ZFSliderBar *sliderBar;
-@property (nonatomic, strong, readwrite) UILabel *totalDurationLabel;
-@property (nonatomic, strong, readwrite) UILabel *currentTimeLabel;
+@property (nonatomic, strong, readwrite) ZFVideoPlayerBottomToolsView *bottomToolsView;
 
 @property (nonatomic, strong, readwrite) NSIndexPath *currentIndexPath;
 @property (nonatomic, assign, readwrite) BOOL isSmallWindow;
@@ -48,10 +45,7 @@
         [self addSubview: self.playOrPauseBtn];
         [self addSubview: self.activityIndicatorView];
         [self addSubview: self.bottomToolsView];
-        [self addSubview: self.sliderBar];
-        [self.bottomToolsView addSubview: self.totalDurationLabel];
-        [self.bottomToolsView addSubview: self.currentTimeLabel];
-        
+
         UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapBgView)];
         [self addGestureRecognizer: tapGesture];
         
@@ -93,63 +87,36 @@
     return _activityIndicatorView;
 }
 
-- (UIView *)bottomToolsView {
+- (ZFVideoPlayerBottomToolsView *)bottomToolsView {
     if (!_bottomToolsView) {
-        _bottomToolsView = [[UIView alloc] init];
+        _bottomToolsView = [[ZFVideoPlayerBottomToolsView alloc] init];
         _bottomToolsView.backgroundColor = [UIColor grayColor];
-    }
-    return _bottomToolsView;
-}
-
-- (ZFSliderBar *)sliderBar {
-    if (!_sliderBar) {
-        _sliderBar = [[ZFSliderBar alloc] init];
         
         __weak typeof(self) weakSelf = self;
-        
-        _sliderBar.valueDidChangedBlock = ^{
+
+        _bottomToolsView.sliderBar.valueDidChangedBlock = ^{
             float totalDuration = CMTimeGetSeconds([weakSelf.playerItem duration]);
             // 更改 时间标签
-            weakSelf.currentTimeLabel.text = [weakSelf timeFormatted: weakSelf.sliderBar.value * totalDuration];
+            weakSelf.bottomToolsView.currentTimeLabel.text = [weakSelf timeFormatted: weakSelf.bottomToolsView.sliderBar.value * totalDuration];
         };
-        
-        _sliderBar.valueChangeDidFinishedBlock = ^{
+
+        _bottomToolsView.sliderBar.valueChangeDidFinishedBlock = ^{
             float totalDuration = CMTimeGetSeconds([weakSelf.playerItem duration]);
-            
-            [weakSelf.player seekToTime:CMTimeMake(weakSelf.sliderBar.value * totalDuration, 1) completionHandler:^(BOOL finished) {
+
+            [weakSelf.player seekToTime:CMTimeMake(weakSelf.bottomToolsView.sliderBar.value * totalDuration, 1) completionHandler:^(BOOL finished) {
                 NSLog(@"dragDotBlock");
                 [weakSelf.player play];
             }];
         };
         
-        _sliderBar.dragDotBlock = ^{
+        _bottomToolsView.sliderBar.dragDotBlock = ^{
             [weakSelf.player pause];
         };
+
         
     }
-    return _sliderBar;
+    return _bottomToolsView;
 }
-
-- (UILabel *)totalDurationLabel {
-    if (!_totalDurationLabel) {
-        _totalDurationLabel = [[UILabel alloc] init];
-        _totalDurationLabel.font = [UIFont systemFontOfSize: 14];
-        _totalDurationLabel.text = @"00:00:00";
-        _totalDurationLabel.textAlignment = NSTextAlignmentRight;
-    }
-    return _totalDurationLabel;
-}
-
-- (UILabel *)currentTimeLabel {
-    if (!_currentTimeLabel) {
-        _currentTimeLabel = [[UILabel alloc] init];
-        _currentTimeLabel.font = [UIFont systemFontOfSize: 14];
-        _currentTimeLabel.text = @"00:00:00";
-        _totalDurationLabel.textAlignment = NSTextAlignmentRight;
-    }
-    return _currentTimeLabel;
-}
-
 - (AVPlayerItem *)getPlayerItem {
     NSAssert(self.videoUrl != nil, @"Url is nil");
     AVPlayerItem *playerItem = [AVPlayerItem playerItemWithURL: [NSURL URLWithString:[self.videoUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]];
@@ -185,33 +152,11 @@
         make.bottom.equalTo(self);
         make.height.equalTo(@40);
     }];
-    
-    [self.totalDurationLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.trailing.equalTo(self.bottomToolsView).offset(-12);
-        make.centerY.equalTo(self.bottomToolsView);
-        make.width.equalTo(@65);
-    }];
-    
-    [self.currentTimeLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.leading.equalTo(self.bottomToolsView).offset(12);
-        make.centerY.equalTo(self.bottomToolsView);
-        make.width.equalTo(@65);
-    }];
-    
-    [self.sliderBar mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.leading.equalTo(self.currentTimeLabel.mas_trailing).offset(1);
-        make.trailing.equalTo(self.totalDurationLabel.mas_leading).offset(-1);
-        make.top.equalTo(self.bottomToolsView);
-        make.bottom.equalTo(self.bottomToolsView);
-    }];
-    
+
     [self bringSubviewToFront: self.playOrPauseBtn];
     [self bringSubviewToFront: self.activityIndicatorView];
     
     [self bringSubviewToFront: self.bottomToolsView];
-    [self bringSubviewToFront: self.sliderBar];
-    [self bringSubviewToFront: self.totalDurationLabel];
-    [self bringSubviewToFront: self.currentTimeLabel];
 }
 
 
@@ -296,11 +241,10 @@
     [self.player addPeriodicTimeObserverForInterval:CMTimeMake(1, 1) queue: dispatch_get_main_queue() usingBlock:^(CMTime time) {
         float totalDuration = CMTimeGetSeconds([weakSelf.playerItem duration]);
         float currentTime = CMTimeGetSeconds([weakSelf.playerItem currentTime]);
-        weakSelf.totalDurationLabel.text = [weakSelf timeFormatted: totalDuration];
-//        weakSelf.currentTimeLabel.text = [weakSelf timeFormatted: currentTime];
+        weakSelf.bottomToolsView.totalDurationLabel.text = [weakSelf timeFormatted: totalDuration];
         
         float scale = currentTime / totalDuration;
-        weakSelf.sliderBar.value = scale;
+        weakSelf.bottomToolsView.sliderBar.value = scale;
         if (scale == 1) {
             NSLog(@"播放完成");
         }
@@ -322,7 +266,6 @@
 
 #pragma mark - small window play
 - (void)playWithBindTableView: (UITableView *)tableView currentIndexPath: (NSIndexPath *)currentIndexPath isSupportSmallWindow: (BOOL)isSupportSmallWindow {
-    NSLog(@"%@", tableView);
     
     CGFloat tableViewContentOffsetY = tableView.contentOffset.y;
     
@@ -341,9 +284,7 @@
     // 离开屏幕, 展示小屏幕
     if (tableViewContentOffsetY > cellBottom) {
         NSLog(@"向上滑动, 离开屏幕");
-        
         [self playWithSmallWindow];
-        
         return;
     }
 

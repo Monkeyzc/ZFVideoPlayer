@@ -47,6 +47,7 @@
 		A47C0D301E695C2C00031B50 /* UIView+WebCacheOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = A47C0D1C1E695C2C00031B50 /* UIView+WebCacheOperation.m */; };
 		A47C0D331E695E5900031B50 /* ZFVideoPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = A47C0D321E695E5900031B50 /* ZFVideoPlayer.m */; };
 		A4A6277F1E69D076000BB6F8 /* ZFSliderBar.m in Sources */ = {isa = PBXBuildFile; fileRef = A4A6277E1E69D076000BB6F8 /* ZFSliderBar.m */; };
+		A4E024761E6ADEC6005542CF /* ZFVideoPlayerBottomToolsView.m in Sources */ = {isa = PBXBuildFile; fileRef = A4E024751E6ADEC6005542CF /* ZFVideoPlayerBottomToolsView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -133,6 +134,8 @@
 		A47C0D321E695E5900031B50 /* ZFVideoPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZFVideoPlayer.m; sourceTree = "<group>"; };
 		A4A6277D1E69D076000BB6F8 /* ZFSliderBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZFSliderBar.h; sourceTree = "<group>"; };
 		A4A6277E1E69D076000BB6F8 /* ZFSliderBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZFSliderBar.m; sourceTree = "<group>"; };
+		A4E024741E6ADEC6005542CF /* ZFVideoPlayerBottomToolsView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZFVideoPlayerBottomToolsView.h; sourceTree = "<group>"; };
+		A4E024751E6ADEC6005542CF /* ZFVideoPlayerBottomToolsView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZFVideoPlayerBottomToolsView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -175,6 +178,8 @@
 				A47C0D321E695E5900031B50 /* ZFVideoPlayer.m */,
 				A4A6277D1E69D076000BB6F8 /* ZFSliderBar.h */,
 				A4A6277E1E69D076000BB6F8 /* ZFSliderBar.m */,
+				A4E024741E6ADEC6005542CF /* ZFVideoPlayerBottomToolsView.h */,
+				A4E024751E6ADEC6005542CF /* ZFVideoPlayerBottomToolsView.m */,
 				A47C0CC61E69441A00031B50 /* VideoModel.h */,
 				A47C0CC71E69441A00031B50 /* VideoModel.m */,
 				A47C0CB81E690EB700031B50 /* Main.storyboard */,
@@ -349,6 +354,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A47C0CEF1E69598600031B50 /* NSLayoutConstraint+MASDebugAdditions.m in Sources */,
+				A4E024761E6ADEC6005542CF /* ZFVideoPlayerBottomToolsView.m in Sources */,
 				A47C0CB71E690EB700031B50 /* ViewController.m in Sources */,
 				A47C0D2D1E695C2C00031B50 /* UIImageView+HighlightedWebCache.m in Sources */,
 				A47C0CED1E69598600031B50 /* MASViewConstraint.m in Sources */,
