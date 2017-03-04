@@ -14,6 +14,7 @@
 
 #define ScreenWidth [UIScreen mainScreen].bounds.size.width
 #define ScreenHeight [UIScreen mainScreen].bounds.size.height
+#define PlayOrPauseBtnSize 60
 
 @interface ZFVideoPlayer()
 
@@ -249,7 +250,6 @@
         
         switch (playerStatus) {
             case AVPlayerStatusUnknown:
-                
                 break;
             case AVPlayerStatusReadyToPlay:
                 [self.activityIndicatorView stopAnimating];
@@ -258,12 +258,10 @@
                 NSLog(@"AVPlayerStatusFailed");
             }
                 break;
-                
             default:
                 break;
         }
     }
-
 }
 
 
@@ -349,6 +347,9 @@
         return;
     }
     
+    // 隐藏底部工具条
+    self.bottomToolsView.hidden = YES;
+    
     UIWindow *keyWindow =  [UIApplication sharedApplication].keyWindow;
     
     // 坐标转换
@@ -370,6 +371,9 @@
     if (![self.superview isKindOfClass:[UIWindow class]]) {
         return;
     }
+    
+    // 隐藏底部工具条
+    self.bottomToolsView.hidden = NO;
     
     UITableViewCell *cell = [self.bindTableView cellForRowAtIndexPath: self.currentIndexPath];
     CGRect cellFrame =  cell.frame;
