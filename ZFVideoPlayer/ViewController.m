@@ -43,7 +43,7 @@
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
     self.tableView.tableFooterView = [UIView new];
-    self.tableView.rowHeight = 280;
+    self.tableView.rowHeight = 240;
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     
     [self.view addSubview: self.tableView];

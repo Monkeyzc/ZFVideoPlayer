@@ -32,6 +32,7 @@ static NSString *reuseIdentifier = @"video_cell";
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
     if (self = [super initWithStyle: style reuseIdentifier: reuseIdentifier]) {
         self.selectionStyle = UITableViewCellSelectionStyleNone;
+        self.backgroundColor = [UIColor blackColor];
         [self configureSubViews];
     }
     return self;
@@ -60,6 +61,9 @@ static NSString *reuseIdentifier = @"video_cell";
 - (UILabel *)titleLabel {
     if (!_titleLabel) {
         _titleLabel = [[UILabel alloc] init];
+        _titleLabel.backgroundColor = [UIColor blackColor];
+        _titleLabel.textColor = [UIColor whiteColor];
+        _titleLabel.font = [UIFont systemFontOfSize:14];
         [self.contentView addSubview: _titleLabel];
     }
     return _titleLabel;
@@ -83,7 +87,7 @@ static NSString *reuseIdentifier = @"video_cell";
         make.top.equalTo(self.coverView.mas_bottom);
         make.leading.equalTo(self.contentView).offset(12);
         make.trailing.equalTo(self.contentView).offset(-12);
-        make.height.equalTo(@80);
+        make.height.equalTo(@40);
     }];
 }
 
