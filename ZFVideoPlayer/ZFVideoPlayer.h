@@ -11,7 +11,5 @@
 @interface ZFVideoPlayer : UIView
 @property (nonatomic, strong, readwrite) NSString *videoUrl;
 
-- (void)play;
-- (void)pause;
 - (void)destroyVideoPlayer;
 @end

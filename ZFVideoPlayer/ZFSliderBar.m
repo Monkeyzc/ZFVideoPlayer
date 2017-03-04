@@ -9,8 +9,8 @@
 #import "ZFSliderBar.h"
 #import "Masonry.h"
 
-#define sliderHeight 8
-#define dotSize 16
+#define sliderHeight 4
+#define dotSize 3
 
 @implementation ZFSliderBar
 
@@ -40,7 +40,18 @@
             make.width.equalTo(@(dotSize));
             make.height.equalTo(@(dotSize));
         }];
-
+        
+        [self addObserver:self forKeyPath: @"value" options: NSKeyValueObservingOptionNew context:nil];
+        
+        // 滑动手势
+        UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget: self action: @selector(panGesture:)];
+        [self addGestureRecognizer:panGesture];
+        
+        // 点击手势
+        UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget: self action:@selector(tapGesture:)];
+        [self addGestureRecognizer: tapGesture];
+        
+        [tapGesture requireGestureRecognizerToFail:panGesture];
     }
     return self;
 }
@@ -77,16 +88,55 @@
 
 - (void)setValue:(float)value {
     _value = value;
-    if (value == 1) {
-        [self.dotView mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.leading.equalTo(self.bgView).offset(self.bgView.frame.size.width - dotSize);
-        }];
+}
+
+#pragma mark - Gesture recognizer
+- (void)panGesture: (UIPanGestureRecognizer *)panGestureRecognizer {
+    CGPoint location = [panGestureRecognizer locationInView: self];
+    CGFloat x = location.x;
+    if (x < 0 || x > self.frame.size.width) {
         return;
     }
+    self.value = x / self.frame.size.width;
+    if (panGestureRecognizer.state == UIGestureRecognizerStateEnded) {
+        if (self.valueChangeDidFinishedBlock) {
+            self.valueChangeDidFinishedBlock();
+        }
+
+    } else if (panGestureRecognizer.state == UIGestureRecognizerStateBegan || panGestureRecognizer.state == UIGestureRecognizerStateChanged) {
+        if (self.dragDotBlock) {
+            self.dragDotBlock();
+        }
+    }
+}
+
+- (void)tapGesture: (UITapGestureRecognizer *)tapGestureRecognizer {
     
+    CGPoint location = [tapGestureRecognizer locationInView: self];
+    CGFloat x = location.x;
+    self.value = x / self.frame.size.width;
+
+    if (self.valueChangeDidFinishedBlock) {
+        self.valueChangeDidFinishedBlock();
+    }
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
+    [self updateDotFrame];
+    if (self.valueDidChangedBlock) {
+        self.valueDidChangedBlock();
+    }
+}
+
+- (void)updateDotFrame {
     [self.dotView mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.leading.equalTo(self.bgView).offset(value * self.bgView.frame.size.width);
+        make.leading.equalTo(self.bgView).offset(self.value * (self.bgView.frame.size.width - dotSize));
     }];
 }
+
+- (void)dealloc {
+    [self removeObserver: self forKeyPath:@"value"];
+}
+
 
 @end

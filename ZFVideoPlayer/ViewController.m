@@ -58,8 +58,10 @@
             NSLog(@"error: %@", error);
             return;
         }
+//        NSLog(@"data: %@", data);
         // serializer data
         NSDictionary *serializerData = [NSJSONSerialization JSONObjectWithData: data options:NSJSONReadingMutableContainers error:nil];
+//        NSLog(@"serializerData: %@", serializerData);
         NSMutableArray *modelArray = [[NSMutableArray alloc] init];
         NSArray *array = [serializerData objectForKey:@"VAP4BFR16"];
         for (NSDictionary *obj in array) {

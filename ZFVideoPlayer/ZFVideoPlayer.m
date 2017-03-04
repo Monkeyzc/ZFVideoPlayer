@@ -92,6 +92,28 @@
 - (ZFSliderBar *)sliderBar {
     if (!_sliderBar) {
         _sliderBar = [[ZFSliderBar alloc] init];
+        
+        __weak typeof(self) weakSelf = self;
+        
+        _sliderBar.valueDidChangedBlock = ^{
+            float totalDuration = CMTimeGetSeconds([weakSelf.playerItem duration]);
+            // 更改 时间标签
+            weakSelf.currentTimeLabel.text = [weakSelf timeFormatted: weakSelf.sliderBar.value * totalDuration];
+        };
+        
+        _sliderBar.valueChangeDidFinishedBlock = ^{
+            float totalDuration = CMTimeGetSeconds([weakSelf.playerItem duration]);
+            
+            [weakSelf.player seekToTime:CMTimeMake(weakSelf.sliderBar.value * totalDuration, 1) completionHandler:^(BOOL finished) {
+                NSLog(@"dragDotBlock");
+                [weakSelf.player play];
+            }];
+        };
+        
+        _sliderBar.dragDotBlock = ^{
+            [weakSelf.player pause];
+        };
+        
     }
     return _sliderBar;
 }
@@ -101,6 +123,7 @@
         _totalDurationLabel = [[UILabel alloc] init];
         _totalDurationLabel.font = [UIFont systemFontOfSize: 14];
         _totalDurationLabel.text = @"00:00:00";
+        _totalDurationLabel.textAlignment = NSTextAlignmentRight;
     }
     return _totalDurationLabel;
 }
@@ -110,6 +133,7 @@
         _currentTimeLabel = [[UILabel alloc] init];
         _currentTimeLabel.font = [UIFont systemFontOfSize: 14];
         _currentTimeLabel.text = @"00:00:00";
+        _totalDurationLabel.textAlignment = NSTextAlignmentRight;
     }
     return _currentTimeLabel;
 }
@@ -215,17 +239,6 @@
     }
 }
 
-- (void)play {
-    NSLog(@"play");
-    [self.player play];
-}
-
-- (void)pause {
-    NSLog(@"pause");
-    [self.player pause];
-}
-
-
 - (void)destroyVideoPlayer {
     NSLog(@"destroyVideoPlayer");
     [self.player pause];
@@ -267,14 +280,13 @@
         float totalDuration = CMTimeGetSeconds([weakSelf.playerItem duration]);
         float currentTime = CMTimeGetSeconds([weakSelf.playerItem currentTime]);
         weakSelf.totalDurationLabel.text = [weakSelf timeFormatted: totalDuration];
-        weakSelf.currentTimeLabel.text = [weakSelf timeFormatted: currentTime];
+//        weakSelf.currentTimeLabel.text = [weakSelf timeFormatted: currentTime];
         
         float scale = currentTime / totalDuration;
         weakSelf.sliderBar.value = scale;
         if (scale == 1) {
             NSLog(@"播放完成");
         }
-        
     }];
 }
 
