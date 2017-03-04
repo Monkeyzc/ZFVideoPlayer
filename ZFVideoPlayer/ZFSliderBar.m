@@ -29,9 +29,9 @@
         
         [self.cacheIndicatorView mas_makeConstraints:^(MASConstraintMaker *make) {
             make.leading.equalTo(self.bgView);
-            make.trailing.equalTo(self.bgView);
             make.centerY.equalTo(self.bgView);
             make.height.equalTo(self.bgView);
+            make.width.equalTo(@0);
         }];
         
         [self.dotView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -88,6 +88,15 @@
 
 - (void)setValue:(float)value {
     _value = value;
+}
+
+- (void)setCachevalue:(float)cachevalue {
+    _cachevalue = cachevalue;
+    NSLog(@"cahcevalue: %f", _cachevalue);
+    
+    [self.cacheIndicatorView mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.width.equalTo(@(_cachevalue * self.frame.size.width));
+    }];
 }
 
 #pragma mark - Gesture recognizer

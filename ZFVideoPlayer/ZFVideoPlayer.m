@@ -184,6 +184,8 @@
     
     // 监听 播放状态
     [self.player addObserver: self forKeyPath:@"status" options: NSKeyValueObservingOptionNew context: nil];
+    // 监听 缓冲
+    [self.playerItem addObserver: self forKeyPath:@"loadedTimeRanges" options:NSKeyValueObservingOptionNew context:nil];
     
     [self.activityIndicatorView startAnimating];
 }
@@ -262,6 +264,21 @@
                 break;
         }
     }
+    
+    // 已加载的数据
+    if ([keyPath isEqualToString: @"loadedTimeRanges"]) {
+        CMTimeRange loadedTimeRange = [[self.playerItem.loadedTimeRanges firstObject] CMTimeRangeValue];
+        
+        NSLog(@"totalDuration: %f", CMTimeGetSeconds(self.playerItem.duration));
+        
+        NSLog(@"+++++++++++++");
+        NSLog(@"start: %f", CMTimeGetSeconds(loadedTimeRange.start));
+        NSLog(@"duration: %f", CMTimeGetSeconds(loadedTimeRange.duration));
+        NSLog(@"==========");
+        
+        float totalBuffer = CMTimeGetSeconds(loadedTimeRange.start) + CMTimeGetSeconds(loadedTimeRange.duration);
+        self.bottomToolsView.sliderBar.cachevalue = totalBuffer / CMTimeGetSeconds(self.playerItem.duration);
+    }
 }
 
 
@@ -289,10 +306,6 @@
     int minutes = (totalSeconds / 60) % 60;
     int hours = totalSeconds / 3600;
     return [NSString stringWithFormat:@"%02d:%02d:%02d", hours, minutes, seconds];
-}
-
-- (void)dealloc {
-    [self.player removeObserver: self forKeyPath: @"status"];
 }
 
 #pragma mark - small window play
@@ -393,6 +406,10 @@
         // 添加到原来的cell上
         [cell.contentView addSubview:self];
     }];
+}
+- (void)dealloc {
+    [self.player removeObserver: self forKeyPath: @"status"];
+    [self.playerItem removeObserver: self forKeyPath: @"loadedTimeRanges"];
 }
 
 @end

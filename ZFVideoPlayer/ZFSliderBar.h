@@ -27,5 +27,6 @@
  0 - 1
  */
 @property (nonatomic, assign, readwrite) float value;
+@property (nonatomic, assign, readwrite) float cachevalue;
 
 @end
