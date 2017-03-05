@@ -307,6 +307,14 @@
         weakSelf.bottomToolsView.sliderBar.value = scale;
         if (scale == 1) {
             NSLog(@"播放完成");
+            
+            weakSelf.playOrPauseBtn.selected = NO;
+            weakSelf.playOrPauseBtn.hidden = NO;
+            weakSelf.bottomToolsView.hidden = NO;
+            CMTime currentCMTime = CMTimeMake(0, 1);
+            [weakSelf.player seekToTime:currentCMTime completionHandler:^(BOOL finished) {
+                weakSelf.bottomToolsView.sliderBar.value = 0.0f;
+            }];
         }
     }];
 }
