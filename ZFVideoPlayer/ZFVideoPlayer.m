@@ -61,7 +61,7 @@
     return self;
 }
 
-#pragma mark - Lazy loads
+#pragma mark --- Lazy loads ---
 - (AVPlayerLayer *)playerLayer {
     if (!_playerLayer) {
         _playerLayer = [AVPlayerLayer playerLayerWithPlayer: self.player];
@@ -127,6 +127,8 @@
     }
     return _bottomToolsView;
 }
+
+#pragma mark --- Private ---
 - (AVPlayerItem *)getPlayerItem {
     NSAssert(self.videoUrl != nil, @"Url is nil");
     AVPlayerItem *playerItem = [AVPlayerItem playerItemWithURL: [NSURL URLWithString:[self.videoUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]];
@@ -134,7 +136,15 @@
     return playerItem;
 }
 
+- (NSString *)timeFormatted:(int)totalSeconds {
+    int seconds = totalSeconds % 60;
+    int minutes = (totalSeconds / 60) % 60;
+    int hours = totalSeconds / 3600;
+    return [NSString stringWithFormat:@"%02d:%02d:%02d", hours, minutes, seconds];
+}
 
+
+#pragma mark --- layout subviews ---
 - (void)layoutSubviews {
     [super layoutSubviews];
     
@@ -166,12 +176,11 @@
 
     [self bringSubviewToFront: self.playOrPauseBtn];
     [self bringSubviewToFront: self.activityIndicatorView];
-    
     [self bringSubviewToFront: self.bottomToolsView];
 }
 
 
-#pragma mark - Override setter
+#pragma mark --- Override setter ---
 - (void)setVideoUrl:(NSString *)videoUrl {
     _videoUrl = videoUrl;
     [self.layer addSublayer: self.playerLayer];
@@ -193,14 +202,14 @@
     [self.activityIndicatorView startAnimating];
 }
 
+#pragma mark --- Actions ---
+
 - (void)clickPlayOrPauseBtn: (UIButton *)btn {
     btn.selected = !btn.selected;
     [self playOrPause];
 }
 
-#pragma mark - Actions
 - (void)tapBgView {
-//    NSLog(@"tapBgView");
     self.playOrPauseBtn.hidden = !self.playOrPauseBtn.hidden;
     self.bottomToolsView.hidden = !self.bottomToolsView.hidden;
     
@@ -228,11 +237,10 @@
             self.frame = self.originFrame;
         }];
     }
-    
     self.isZoom = !self.isZoom;
 }
 
-#pragma mark - Public
+#pragma mark --- Public ---
 - (void)playOrPause {
     if (self.player.rate == 0) { // Pause
         [self.player play];
@@ -248,7 +256,7 @@
     [self removeFromSuperview];
 }
 
-#pragma - KVO
+#pragma mark --- KVO ---
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
     
     if ([keyPath isEqualToString:@"status"]) {
@@ -301,15 +309,6 @@
             NSLog(@"播放完成");
         }
     }];
-}
-
-#pragma mark - timeFormat
-
-- (NSString *)timeFormatted:(int)totalSeconds {
-    int seconds = totalSeconds % 60;
-    int minutes = (totalSeconds / 60) % 60;
-    int hours = totalSeconds / 3600;
-    return [NSString stringWithFormat:@"%02d:%02d:%02d", hours, minutes, seconds];
 }
 
 #pragma mark - small window play
@@ -411,6 +410,7 @@
         [cell.contentView addSubview:self];
     }];
 }
+
 - (void)dealloc {
     [self.player removeObserver: self forKeyPath: @"status"];
     [self.playerItem removeObserver: self forKeyPath: @"loadedTimeRanges"];
