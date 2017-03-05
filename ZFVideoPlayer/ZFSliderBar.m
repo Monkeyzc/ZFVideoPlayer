@@ -10,14 +10,16 @@
 #import "Masonry.h"
 
 #define sliderHeight 4
-#define dotSize 3
+#define dotSize 8
 
 @implementation ZFSliderBar
 
 - (instancetype)init {
     if (self = [super init]) {
+
         [self addSubview: self.bgView];
         [self addSubview: self.cacheIndicatorView];
+        [self addSubview: self.playIndicatorView];
         [self addSubview: self.dotView];
         
         [self.bgView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -31,14 +33,21 @@
             make.leading.equalTo(self.bgView);
             make.centerY.equalTo(self.bgView);
             make.height.equalTo(self.bgView);
-            make.width.equalTo(@0);
+            make.trailing.equalTo(self.bgView.mas_leading);
         }];
         
         [self.dotView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.leading.equalTo(self.bgView).offset(0);
-            make.centerY.equalTo(self.bgView).offset(0);
+            make.leading.equalTo(self.bgView);
+            make.centerY.equalTo(self.bgView);
             make.width.equalTo(@(dotSize));
             make.height.equalTo(@(dotSize));
+        }];
+        
+        [self.playIndicatorView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.leading.equalTo(self.bgView);
+            make.centerY.equalTo(self.bgView);
+            make.height.equalTo(@(sliderHeight));
+            make.trailing.equalTo(self.dotView);
         }];
         
         [self addObserver:self forKeyPath: @"value" options: NSKeyValueObservingOptionNew context:nil];
@@ -59,7 +68,7 @@
 - (UIView *)bgView {
     if (!_bgView) {
         _bgView = [[UIView alloc] init];
-        _bgView.backgroundColor = [UIColor purpleColor];
+        _bgView.backgroundColor = [UIColor yellowColor];
         _bgView.layer.cornerRadius = sliderHeight * 0.5;
         _bgView.clipsToBounds = YES;
     }
@@ -69,7 +78,7 @@
 - (UIView *)cacheIndicatorView {
     if (!_cacheIndicatorView) {
         _cacheIndicatorView = [[UIView alloc] init];
-        _cacheIndicatorView.backgroundColor = [UIColor redColor];
+        _cacheIndicatorView.backgroundColor = [UIColor purpleColor];
         _cacheIndicatorView.layer.cornerRadius = sliderHeight * 0.5;
         _cacheIndicatorView.clipsToBounds = YES;
     }
@@ -86,6 +95,23 @@
     return _dotView;
 }
 
+- (UIView *)playIndicatorView {
+    if (!_playIndicatorView) {
+        _playIndicatorView = [[UIView alloc] init];
+        _playIndicatorView.backgroundColor = [UIColor redColor];
+        _playIndicatorView.layer.cornerRadius = dotSize * 0.5;
+        _playIndicatorView.clipsToBounds = YES;
+    }
+    return _playIndicatorView;
+}
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    [self.cacheIndicatorView mas_updateConstraints:^(MASConstraintMaker *make) {
+        make.trailing.equalTo(self.bgView.mas_leading).offset(_cachevalue * self.frame.size.width);
+    }];
+}
+
 - (void)setValue:(float)value {
     _value = value;
 }
@@ -95,8 +121,10 @@
     NSLog(@"cahcevalue: %f", _cachevalue);
     
     [self.cacheIndicatorView mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.width.equalTo(@(_cachevalue * self.frame.size.width));
+        make.trailing.equalTo(self.bgView.mas_leading).offset(_cachevalue * self.frame.size.width);
     }];
+
+    [self.cacheIndicatorView setNeedsDisplay];
 }
 
 #pragma mark - Gesture recognizer
@@ -141,6 +169,7 @@
     [self.dotView mas_updateConstraints:^(MASConstraintMaker *make) {
         make.leading.equalTo(self.bgView).offset(self.value * (self.bgView.frame.size.width - dotSize));
     }];
+    [self updateConstraintsIfNeeded];
 }
 
 - (void)dealloc {

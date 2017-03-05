@@ -15,6 +15,7 @@
 @property (nonatomic, strong, readwrite) UIView *bgView;
 @property (nonatomic, strong, readwrite) UIView *cacheIndicatorView;
 @property (nonatomic, strong, readwrite) UIView *dotView;
+@property (nonatomic, strong, readwrite) UIView *playIndicatorView;
 
 
 @property (nonatomic, strong, readwrite) void (^valueDidChangedBlock)();

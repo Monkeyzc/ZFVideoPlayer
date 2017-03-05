@@ -206,7 +206,6 @@
 }
 
 - (void)zoomPlayer {
-    
     if (!self.isZoom) {
         [[UIDevice currentDevice] setValue: [NSNumber numberWithInt: UIInterfaceOrientationLandscapeLeft] forKey:@"orientation"];
         [self updateConstraintsIfNeeded];

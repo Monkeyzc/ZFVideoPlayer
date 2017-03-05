@@ -13,8 +13,8 @@
 
 - (instancetype)init {
     if (self = [super init]) {
-        self.backgroundColor = [UIColor grayColor];
-        self.alpha = 0.6;
+        self.backgroundColor = [UIColor blackColor];
+        self.alpha = 0.8;
         
         [self addSubview: self.currentTimeLabel];
         [self addSubview: self.sliderBar];
