@@ -177,7 +177,10 @@
     [self.layer addSublayer: self.playerLayer];
     
     [self clickPlayOrPauseBtn: self.playOrPauseBtn];
+    
+    //隐藏播放按钮 和 底部工具条
     self.playOrPauseBtn.hidden = YES;
+    self.bottomToolsView.hidden = YES;
     
     // 监听 当前播放的时间在哪
     [self addPeriodicTimeObserver];
@@ -199,9 +202,11 @@
 - (void)tapBgView {
 //    NSLog(@"tapBgView");
     self.playOrPauseBtn.hidden = !self.playOrPauseBtn.hidden;
+    self.bottomToolsView.hidden = !self.bottomToolsView.hidden;
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         self.playOrPauseBtn.hidden = !self.playOrPauseBtn.hidden;;
+        self.bottomToolsView.hidden = !self.bottomToolsView.hidden;
     });
 }
 
