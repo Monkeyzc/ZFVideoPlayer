@@ -299,7 +299,12 @@
     __weak typeof(self) weakSelf = self;
     
     [self.player addPeriodicTimeObserverForInterval:CMTimeMake(1, 1) queue: dispatch_get_main_queue() usingBlock:^(CMTime time) {
+        
         float totalDuration = CMTimeGetSeconds([weakSelf.playerItem duration]);
+        if (isnan(totalDuration)) {
+            return ;
+        }
+
         float currentTime = CMTimeGetSeconds([weakSelf.playerItem currentTime]);
         weakSelf.bottomToolsView.totalDurationLabel.text = [weakSelf timeFormatted: totalDuration];
         
